@@ -1,0 +1,1 @@
+idf_component_register(SRCS "wifi_handler.cpp" INCLUDE_DIRS "include" REQUIRES "esp_wifi freertos esp_event esp_netif esp_eth esp_http_server esp_http_client")
