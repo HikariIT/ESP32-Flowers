@@ -9,6 +9,7 @@
 #include "led_handler.hpp"
 #include "wifi_handler.hpp"
 #include "http_handler.hpp"
+#include "ble_server.hpp"
 
 class App final {
 public:
