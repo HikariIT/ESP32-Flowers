@@ -3,18 +3,17 @@
 void App::init() {
     ESP_ERROR_CHECK(nvs_flash_init());
 
-
-
     xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
                 nullptr, 4, nullptr);
     // BleServer::initializeBluetoothServer();
-    MonitorHandler::initializeMonitor();
+    // MonitorHandler::initializeMonitor();
     //BleClient::initializeBluetoothClient();
     
-    ThermometerHandler::initializeTermometer();
-    xTaskCreate(&ThermometerHandler::ThermometerHandlerTask, "thermometer_handler", 2048,
+    // ThermometerHandler::initializeTermometer();
+    /*xTaskCreate(&ThermometerHandler::ThermometerHandlerTask, "thermometer_handler", 2048,
                 nullptr, 4, nullptr);
-    ESP_LOGI("App", "Initialized");
+    ESP_LOGI("App", "Initialized");*/
+    // BleClient::initializeBluetoothClient();
     // WifiHandler::initializeWifiStation();
     // MqttHandler::initializeMqttClient();
 

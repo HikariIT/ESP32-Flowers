@@ -14,10 +14,15 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
-#define CONFIG_BROKER_URI "mqtt://192.168.91.97:1883"
+#define CONFIG_BROKER_URI "mqtt://192.168.136.97:1883"
 
 class MqttHandler {
+    static std::string UUID;
     static const char* TAG;
+    static std::pair<float, float> speakerHumidityLevels;
+    static std::pair<float, float> speakerTemperatureLevels;
+    static std::pair<float, float> diodeHumidityLevels;
+    static std::pair<float, float> diodeTemperatureLevels;
 public:
     static void initializeMqttClient();
 private:
