@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <unordered_map>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -14,29 +15,13 @@
 #include "esp_bt_main.h"
 #include "esp_gatt_common_api.h"
 
-#define BT_SERVER_TAG "BluetoothServer"
-
 #define PROFILE_NUM                 1
 #define PROFILE_APP_IDX             0
-#define ESP_APP_ID                  0x55
-#define SAMPLE_DEVICE_NAME          "ESP_GATTS_DEMO"
 #define SVC_INST_ID                 0
 
-/* The max length of characteristic value. When the GATT client performs a write or prepare write operation,
-*  the data length must be less than GATTS_DEMO_CHAR_VAL_LEN_MAX.
-*/
 #define GATTS_DEMO_CHAR_VAL_LEN_MAX 500
 #define PREPARE_BUF_MAX_SIZE        1024
 #define CHAR_DECLARATION_SIZE       (sizeof(uint8_t))
-
-#define ADV_CONFIG_FLAG             (1 << 0)
-#define SCAN_RSP_CONFIG_FLAG        (1 << 1)
-
-void ble_server_init();
-
-static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gap_param);
-static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
-static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_interface_type, esp_ble_gatts_cb_param_t *gatts_param);
 
 enum DbIndex {
     SERVICE_DECL,
@@ -53,8 +38,6 @@ enum DbIndex {
 
     DB_ATTRIBUTE_COUNT
 };
-
-inline const char* dbIndexToString(int i);
 
 struct prepare_type_env_t {
     uint8_t                 *prepare_buf;
@@ -76,20 +59,38 @@ struct gatts_profile_inst {
     esp_bt_uuid_t descr_uuid;
 };
 
-/*
+inline const char* dbIndexToString(int i);
+
 class BleServer {
 public:
-    BleServer();
+    static void initializeBluetoothServer();
 
 private:
-    bool advertising_configuring = false;
-    bool scan_response_configuring = false;
+    static const uint16_t ESP_APP_ID;
+    static const char* BT_SERVER_TAG;
+    static const char* SAMPLE_DEVICE_NAME;
 
-    static const uint16_t ESP_APP_ID        = 0x55;
-    static const char* SAMPLE_DEVICE_NAME   = "ESP_GATTS_DEMO";
-    static const char* BT_SERVER_TAG        = "BluetoothServer";
+    static bool advertisingConfiguring;
+    static bool scanResponseConfiguring;
+    static uint16_t basicProfileTable[DbIndex::DB_ATTRIBUTE_COUNT];
+    static gatts_profile_inst profileInstances[PROFILE_NUM];
+    static std::unordered_map<int, int> handleToDbIndexMap;
+    static prepare_type_env_t* prepareWriteEnv;
+    static esp_ble_adv_params_t advertisingParams;
+    static esp_ble_adv_data_t scanResponseData;
+    static esp_ble_adv_data_t advertisingData;
+    static uint8_t serviceUUID[16];
 
-    static void gap_event_handler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gap_param);
-    static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
-    static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_interface_type, esp_ble_gatts_cb_param_t *gatts_param);
-};*/
+    static void _gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gap_param);
+    static void _gattsProfileEventHandler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
+    static void _gattsEventHandler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_interface_type, esp_ble_gatts_cb_param_t *gatts_param);
+
+    static void _handleGattsWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
+    static void _handleGattsPrepareWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
+    static void _handleGattsExecWriteEvent(esp_ble_gatts_cb_param_t *param);
+    static void _handleGattsConnectEvent(esp_ble_gatts_cb_param_t *param);
+    static void _handleGattsCreateAttributeTableEvent(esp_ble_gatts_cb_param_t *param);
+
+    static bool _logIfThrowsError(esp_err_t error_code, const char *message, bool error_string = false);
+    static const char* _getCharacteristicName(uint16_t handle);
+};

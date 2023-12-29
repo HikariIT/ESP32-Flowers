@@ -10,6 +10,7 @@
 #include "wifi_handler.hpp"
 #include "http_handler.hpp"
 #include "ble_server.hpp"
+#include "mqtt_handler.hpp"
 
 class App final {
 public:

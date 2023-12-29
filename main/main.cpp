@@ -3,12 +3,13 @@
 void App::init() {
     ESP_ERROR_CHECK(nvs_flash_init());
 
-    //xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
-    //            nullptr, 4, nullptr);
+    xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
+                nullptr, 4, nullptr);
 
-    ble_server_init();
+    BleServer::initializeBluetoothServer();
 
-    //WifiHandler::initializeWifiStation();
+    WifiHandler::initializeWifiStation();
+    MqttHandler::initializeMqttClient();
 
     //xTaskCreate(&HttpHandler::httpHandlerTask, "http_handler", 2048,
     //            nullptr, 5, nullptr);
