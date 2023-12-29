@@ -302,7 +302,7 @@ void BleServer::initializeBluetoothServer() {
 
 // region BLE Server - Event handlers
 
-void BleServer::_gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gap_param) {
+void BleServer::_gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gapParam) {
     switch (event) {
         case ESP_GAP_BLE_ADV_DATA_SET_COMPLETE_EVT:
             advertisingConfiguring = false;
@@ -321,7 +321,7 @@ void BleServer::_gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_pa
             break;
 
         case ESP_GAP_BLE_ADV_START_COMPLETE_EVT:
-            if (gap_param->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+            if (gapParam->adv_start_cmpl.status != ESP_BT_STATUS_SUCCESS) {
                 ESP_LOGE(BleServer::BT_SERVER_TAG, "Advertising start failed");
             } else {
                 ESP_LOGI(BleServer::BT_SERVER_TAG, "Advertising start successful");
@@ -329,7 +329,7 @@ void BleServer::_gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_pa
             break;
 
         case ESP_GAP_BLE_ADV_STOP_COMPLETE_EVT:
-            if (gap_param->adv_stop_cmpl.status != ESP_BT_STATUS_SUCCESS) {
+            if (gapParam->adv_stop_cmpl.status != ESP_BT_STATUS_SUCCESS) {
                 ESP_LOGE(BleServer::BT_SERVER_TAG, "Advertising stop failed");
             } else {
                 ESP_LOGI(BleServer::BT_SERVER_TAG, "Advertising stop successful");
@@ -339,12 +339,12 @@ void BleServer::_gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_pa
         case ESP_GAP_BLE_UPDATE_CONN_PARAMS_EVT:
             ESP_LOGI(BleServer::BT_SERVER_TAG, "Updating connection params");
             ESP_LOGI(BleServer::BT_SERVER_TAG, "--------------------------------------");
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Status: %d", gap_param->update_conn_params.status);
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Min interval: %d", gap_param->update_conn_params.min_int);
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Max interval: %d", gap_param->update_conn_params.max_int);
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Current interval: %d", gap_param->update_conn_params.conn_int);
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Latency: %d", gap_param->update_conn_params.latency);
-            ESP_LOGI(BleServer::BT_SERVER_TAG, "Timeout: %d", gap_param->update_conn_params.timeout);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Status: %d", gapParam->update_conn_params.status);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Min interval: %d", gapParam->update_conn_params.min_int);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Max interval: %d", gapParam->update_conn_params.max_int);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Current interval: %d", gapParam->update_conn_params.conn_int);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Latency: %d", gapParam->update_conn_params.latency);
+            ESP_LOGI(BleServer::BT_SERVER_TAG, "Timeout: %d", gapParam->update_conn_params.timeout);
             ESP_LOGI(BleServer::BT_SERVER_TAG, "--------------------------------------");
             break;
 

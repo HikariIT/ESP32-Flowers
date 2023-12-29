@@ -6,10 +6,11 @@ void App::init() {
     xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
                 nullptr, 4, nullptr);
 
-    BleServer::initializeBluetoothServer();
+    // BleServer::initializeBluetoothServer();
+    BleClient::initializeBluetoothClient();
 
-    WifiHandler::initializeWifiStation();
-    MqttHandler::initializeMqttClient();
+    // WifiHandler::initializeWifiStation();
+    // MqttHandler::initializeMqttClient();
 
     //xTaskCreate(&HttpHandler::httpHandlerTask, "http_handler", 2048,
     //            nullptr, 5, nullptr);

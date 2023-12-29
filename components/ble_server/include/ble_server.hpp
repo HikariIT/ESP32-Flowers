@@ -81,7 +81,7 @@ private:
     static esp_ble_adv_data_t advertisingData;
     static uint8_t serviceUUID[16];
 
-    static void _gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gap_param);
+    static void _gapEventHandler(esp_gap_ble_cb_event_t event, esp_ble_gap_cb_param_t *gapParam);
     static void _gattsProfileEventHandler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
     static void _gattsEventHandler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_interface_type, esp_ble_gatts_cb_param_t *gatts_param);
 
