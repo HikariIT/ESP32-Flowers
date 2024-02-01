@@ -12,7 +12,6 @@
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-
 #define PROFILE_NUM                 1
 #define PROFILE_APP_IDX             0
 #define INVALID_HANDLE              0

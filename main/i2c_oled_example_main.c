@@ -413,41 +413,4 @@ void app_main(void)
 	//xTaskCreate(&task_ssd1306_display_clear, "ssd1306_display_clear",  4096, NULL, 6, NULL);
 	vTaskDelay(100/portTICK_PERIOD_MS);
 	task_ssd1306_display_text("XYZ\nXYZ\nXYZ\nXYZ\nXYZ\nXYZ\nXYZ\nXYZ\n");
-	//xTaskCreate(&task_ssd1306_display_text, "ssd1306_display_text",  4096,
-		//(void *)"", 6, NULL);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//xTaskCreate(&task_ssd1306_contrast, "ssid1306_contrast", 4096, NULL, 6, NULL);
-	/*
-	while(1)
-	{
-
-	task_ssd1306_display_clear(NULL);
-			vTaskDelay(1000 / portTICK_PERIOD_MS);
-	task_ssd1306_display_text("Test1234\n");
-			vTaskDelay(1000 / portTICK_PERIOD_MS);
-	}
-	*/
-	/*
-	xTaskCreate(&task_ssd1306_display_pattern, "ssd1306_display_pattern",  2048, NULL, 6, NULL);
-	xTaskCreate(&task_ssd1306_display_clear, "ssd1306_display_clear",  4096, NULL, 6, NULL);
-	vTaskDelay(100/portTICK_PERIOD_MS);
-	xTaskCreate(&task_ssd1306_display_text, "ssd1306_display_text",  4096,
-		(void *)"Hello world!\nMulitine is OK!\nAnother line", 6, NULL);
-	//xTaskCreate(&task_ssd1306_contrast, "ssid1306_contrast", 4096, NULL, 6, NULL);
-	//xTaskCreate(&task_ssd1306_scroll, "ssid1306_scroll", 4096, NULL, 7, NULL);
-	*/
 }

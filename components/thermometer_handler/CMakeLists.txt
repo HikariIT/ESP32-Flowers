@@ -1,0 +1,1 @@
+idf_component_register(SRCS "thermometer_handler.cpp" INCLUDE_DIRS "include" REQUIRES "monitor_handler led_handler")
