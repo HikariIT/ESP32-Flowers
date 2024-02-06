@@ -3,7 +3,7 @@
 // region BLE Server - Static variables initialization
 
 const char *BleServer::BT_SERVER_TAG = "BluetoothServer";
-const char *BleServer::SAMPLE_DEVICE_NAME = "ESP32 BLE Server";
+const char *BleServer::SAMPLE_DEVICE_NAME = "ESP32 Production App";
 const uint16_t BleServer::ESP_APP_ID = 0x55;
 
 bool BleServer::advertisingConfiguring = false;
@@ -103,7 +103,7 @@ static const uint8_t char_prop_read                = ESP_GATT_CHAR_PROP_BIT_READ
 static const uint8_t char_prop_write               = ESP_GATT_CHAR_PROP_BIT_WRITE;
 static const uint8_t char_prop_read_write_notify   = ESP_GATT_CHAR_PROP_BIT_WRITE | ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY;
 static const uint8_t heart_measurement_ccc[2]      = { 0x00, 0x00 };
-static const uint8_t char_value[4]                 = { 0x11, 0x22, 0x33, 0x44 };
+static const uint8_t char_value[4]                 = { 0x44, 0x75, 0x70, 0x61 };
 
 /* Structure of the Database is as follows:
  * ------------------------------------------------------------
@@ -296,6 +296,28 @@ void BleServer::initializeBluetoothServer() {
     if (error_code) {
         ESP_LOGE(BleServer::BT_SERVER_TAG, "Setting of local MTU failed. Error: %x", error_code);
     }
+
+    nvs_handle_t nvs_handle;
+    esp_err_t nvs_error_code;
+
+    // Open NVS namespace
+    nvs_error_code = nvs_open("storage", NVS_READONLY, &nvs_handle);
+    if (nvs_error_code != ESP_OK) {
+        ESP_LOGE(BleServer::BT_SERVER_TAG, "NVS open failed. Error: %s", esp_err_to_name(nvs_error_code));
+        return;
+    }
+
+    // Read device name from NVS
+    size_t device_name_size = 13;
+    char* device_name = (char*) malloc(device_name_size);
+    nvs_error_code = nvs_get_str(nvs_handle, "deviceId", device_name, &device_name_size);
+    if (nvs_error_code != ESP_OK && nvs_error_code != ESP_ERR_NVS_NOT_FOUND) {
+        ESP_LOGE(BleServer::BT_SERVER_TAG, "NVS get failed. Error: %s", esp_err_to_name(nvs_error_code));
+        return;
+    }
+
+    ESP_LOGI(BleServer::BT_SERVER_TAG, "Device name: %s", device_name);
+    free(device_name);
 }
 
 // endregion
@@ -385,7 +407,7 @@ void BleServer::_gattsProfileEventHandler(esp_gatts_cb_event_t event, esp_gatt_i
             break;
 
         case ESP_GATTS_EXEC_WRITE_EVT:
-            _handleGattsExecWriteEvent(param);
+            _handleGattsExecWriteEvent(gatts_if, param);
             break;
 
         case ESP_GATTS_MTU_EVT:
@@ -462,7 +484,18 @@ void BleServer::_handleGattsWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_
         ESP_LOGI(BleServer::BT_SERVER_TAG, "Received following bytes: ");
         esp_log_buffer_hex(BleServer::BT_SERVER_TAG, param->write.value, param->write.len);
 
-        if (BleServer::handleToDbIndexMap[param->write.handle] == DbIndex::CHARACTERISTIC_A_CCCD && param->write.len == 2){
+        // Write response to client in Characteristic A value to read.
+        // Response is OK
+        const char* response = "OK";
+        esp_ble_gatts_set_attr_value(basicProfileTable[DbIndex::CHARACTERISTIC_A_VAL], strlen(response), (const uint8_t*) response);
+        esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, basicProfileTable[DbIndex::CHARACTERISTIC_A_VAL],
+                                    strlen(response), (uint8_t*) response, false);
+
+        // Write response to client in Characteristic C value to read.
+        // Response is the received data
+        esp_ble_gatts_set_attr_value(basicProfileTable[DbIndex::CHARACTERISTIC_C_VAL], param->write.len, param->write.value);
+
+        if (BleServer::handleToDbIndexMap[param->write.handle] == DbIndex::CHARACTERISTIC_A_CCCD && param->write.len == 2) {
             uint16_t descriptorValue = param->write.value[1] << 8 | param->write.value[0];
             switch (descriptorValue) {
                 case 0x0000:
@@ -551,12 +584,24 @@ void BleServer::_handleGattsPrepareWriteEvent(esp_gatt_if_t gatts_if, esp_ble_ga
 
 }
 
-void BleServer::_handleGattsExecWriteEvent(esp_ble_gatts_cb_param_t *param) {
+void BleServer::_handleGattsExecWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param) {
     if (param->exec_write.exec_write_flag == ESP_GATT_PREP_WRITE_EXEC && prepareWriteEnv->prepare_buf){
         ESP_LOGI(BleServer::BT_SERVER_TAG, "GATTS Prepare Write executed. Length: %d.", prepareWriteEnv->prepare_len);
         ESP_LOGI(BleServer::BT_SERVER_TAG, "Received following bytes:");
                 esp_log_buffer_hex(BleServer::BT_SERVER_TAG, prepareWriteEnv->prepare_buf, prepareWriteEnv->prepare_len);
         ESP_LOGI(BleServer::BT_SERVER_TAG, "--------------------------------------");
+
+        // Write response to client in Characteristic A value to read.
+        // Response is OK
+        const char* response = "OK";
+        esp_ble_gatts_set_attr_value(basicProfileTable[DbIndex::CHARACTERISTIC_A_VAL], strlen(response), (const uint8_t*) response);
+        esp_ble_gatts_send_indicate(gatts_if, param->write.conn_id, basicProfileTable[DbIndex::CHARACTERISTIC_A_VAL],
+                                    strlen(response), (uint8_t*) response, false);
+
+        // Write response to client in Characteristic C value to read.
+        // Response is the received data
+        esp_ble_gatts_set_attr_value(basicProfileTable[DbIndex::CHARACTERISTIC_C_VAL], prepareWriteEnv->prepare_len, prepareWriteEnv->prepare_buf);
+
     } else {
         ESP_LOGI(BleServer::BT_SERVER_TAG, "GATTS Prepare Write cancelled");
     }

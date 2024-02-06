@@ -16,7 +16,7 @@
 #include "thermometer_handler.hpp"
 #include "driver/ledc.h"
 #include "esp_err.h"
-
+#include "esp_mac.h"
 
 #define LEDC_TIMER              LEDC_TIMER_0
 #define LEDC_MODE               LEDC_LOW_SPEED_MODE
@@ -34,11 +34,10 @@
 #define F 349
 #define G 391
 
-
-
 class App final {
 public:
     static void init();
+    static void initializeId();
 };
 
 extern "C" void app_main();

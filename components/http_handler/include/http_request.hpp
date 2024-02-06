@@ -1,7 +1,7 @@
-#ifndef HTTP_REQUEST_H
-#define HTTP_REQUEST_H
+#pragma once
 
 #define MAX_HEADERS         10
+#define MAX_CONTENT_LENGTH  1000
 
 #include <cstdio>
 #include <cstdlib>
@@ -15,7 +15,7 @@ struct HttpRequest {
 };
 
 const char* create_get_request(struct HttpRequest *request);
+const char* create_post_request(struct HttpRequest *request, const char *body);
 
 void add_header(struct HttpRequest *request, const char *name, const char *value);
 
-#endif

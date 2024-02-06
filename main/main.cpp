@@ -1,24 +1,67 @@
 #include "main.hpp"
-//#include <driver/dac_common.h>
+
 void App::init() {
-    ESP_ERROR_CHECK(nvs_flash_init());
+    initializeId();
 
     xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
                 nullptr, 4, nullptr);
-    // BleServer::initializeBluetoothServer();
+
     // MonitorHandler::initializeMonitor();
-    //BleClient::initializeBluetoothClient();
-    
+
     // ThermometerHandler::initializeTermometer();
     /*xTaskCreate(&ThermometerHandler::ThermometerHandlerTask, "thermometer_handler", 2048,
                 nullptr, 4, nullptr);
     ESP_LOGI("App", "Initialized");*/
     // BleClient::initializeBluetoothClient();
-    // WifiHandler::initializeWifiStation();
+
+    BleServer::initializeBluetoothServer();
+    // BleClient::initializeBluetoothClient();
+
+    WifiHandler::initializeWifiStation();
     // MqttHandler::initializeMqttClient();
 
     //xTaskCreate(&HttpHandler::httpHandlerTask, "http_handler", 2048,
     //            nullptr, 5, nullptr);
+
+    /*
+    auto response = HttpHandler::makeGetRequest("Hello, World!", "192.168.0.150", "/", "3000");
+    ESP_LOGI("App", "Response: %s", response->body);
+    ESP_LOGI("App", "Response code: %d", response->status_code);*/
+
+    nvs_handle_t nvsHandler;
+    ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvsHandler));
+
+    // Get the device ID
+    size_t deviceNameSize = 13;
+    char* deviceName = (char*) malloc(deviceNameSize);
+    auto nvs_error_code = nvs_get_str(nvsHandler, "deviceId", deviceName, &deviceNameSize);
+    const char* mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlMTQxMmZycjQxMjVkZXMzIn0.OF7FnAuuPfmmz93Kw_VUHFLCfWVXZdYcKiD4o6724S8";
+
+    std::string jsonBody = R"({"token": ")";
+    jsonBody += mockToken;
+    jsonBody += R"(", "deviceId": ")";
+    jsonBody += deviceName;
+    jsonBody += R"("})";
+
+    auto response2 = HttpHandler::makePostRequest("Hello, World!", "192.168.0.150", "/", "3000",
+                                                    jsonBody.c_str());
+    ESP_LOGI("App", "Response: %s", response2->body);
+    ESP_LOGI("App", "Response code: %d", response2->status_code);
+}
+
+void App::initializeId() {
+    ESP_ERROR_CHECK(nvs_flash_init());
+
+    uint8_t chipId[6];
+    esp_efuse_mac_get_default(chipId);
+    char chipIdString[13];
+    sprintf(chipIdString, "%02X%02X%02X%02X%02X%02X", chipId[0], chipId[1],
+            chipId[2], chipId[3], chipId[4], chipId[5]);
+
+    nvs_handle_t nvsHandler;
+    ESP_ERROR_CHECK(nvs_open("storage", NVS_READWRITE, &nvsHandler));
+
+    nvs_set_str(nvsHandler, "deviceId", chipIdString);
 }
 static void example_ledc_init(void)
 {

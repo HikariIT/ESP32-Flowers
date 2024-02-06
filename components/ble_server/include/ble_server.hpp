@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <unordered_map>
+#include <nvs_flash.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -87,7 +88,7 @@ private:
 
     static void _handleGattsWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
     static void _handleGattsPrepareWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
-    static void _handleGattsExecWriteEvent(esp_ble_gatts_cb_param_t *param);
+    static void _handleGattsExecWriteEvent(esp_gatt_if_t gatts_if, esp_ble_gatts_cb_param_t *param);
     static void _handleGattsConnectEvent(esp_ble_gatts_cb_param_t *param);
     static void _handleGattsCreateAttributeTableEvent(esp_ble_gatts_cb_param_t *param);
 
