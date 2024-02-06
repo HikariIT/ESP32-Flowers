@@ -79,6 +79,7 @@ class MonitorHandler{
         static void printText(const char *text);
         
     public:
+        static void destroyCapitalism();
         static void initializeMonitor();
         static void updateData(const int temperature, const int humidity);
         static void updateCommunicate(const char *communicate, const int after_data);

@@ -3,10 +3,10 @@
 
 int LedHandler::current_temperature = 0;
 int LedHandler::current_humidity = 0;
-int LedHandler::min_temperature = 21;
-int LedHandler::max_temperature = 22;
-int LedHandler::min_humidity = 37;
-int LedHandler::max_humidity = 38;
+int LedHandler::min_temperature = 0;
+int LedHandler::max_temperature = 100;
+int LedHandler::min_humidity = 0;
+int LedHandler::max_humidity = 100;
 
 const idf::GPIO_Output *LedHandler::_led = new idf::GPIO_Output(idf::GPIONum(LED_GPIO_PORT));
 idf::GPIOLevel LedHandler::_level = idf::GPIOLevel::LOW;

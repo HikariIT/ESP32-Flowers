@@ -177,6 +177,85 @@ void MonitorHandler::ssd1306Init(){
 }
 
 
+void MonitorHandler::destroyCapitalism(){
+    uint8_t zeros[31] = {0};
+    MonitorHandler::clearDisplay();
+    uint8_t sierp[8][64] = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        16, 48, 112, 240, 224, 224, 224, 192, 192, 128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 192, 224, 240, 248, 252, 255, 255, 255, 255, 255, 255, 255, 
+        255, 255, 255, 255, 254, 254, 62, 30, 14, 6, 1, 3, 15, 31, 127, 255, 255, 255, 255, 254, 252, 248, 240, 224, 192, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 128, 192, 224, 240, 248, 254, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 247, 227, 193, 
+        128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 31, 255, 255, 255, 255, 255, 255, 255, 255, 254, 248, 192, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 16, 60, 126, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127, 63, 31, 31, 63, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
+        254, 252, 248, 240, 224, 192, 192, 128, 0, 0, 128, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 7, 15, 31, 191, 31, 15, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 7, 15, 31, 63, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 
+        254, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 127, 15, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 128, 192, 224, 240, 248, 252, 255, 255, 255, 255, 254, 254, 252, 252, 248, 248, 248, 248, 240, 240, 240, 240, 240, 240, 240, 240, 240, 240, 248, 249, 
+        255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 249, 240, 224, 192, 192, 128, 0, 0, 0, 0},
+        {0, 48, 120, 252, 254, 255, 255, 255, 255, 255, 255, 255, 127, 63, 31, 15, 7, 7, 7, 15, 15, 31, 31, 31, 63, 63, 63, 63, 127, 127, 127, 127, 127, 127, 127, 127, 63, 63, 63, 63, 
+        31, 31, 15, 15, 7, 7, 3, 7, 15, 31, 63, 127, 255, 255, 255, 255, 255, 255, 255, 255, 255, 126, 60, 8},
+        {0, 0, 0, 0, 1, 3, 7, 15, 15, 7, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 3, 7, 7, 3, 1, 0, 0, 0, 0},
+    };
+ 
+    for(int i=0; i<8;i++){
+            i2c_cmd_handle_t cmd;
+        	cmd = i2c_cmd_link_create();
+            i2c_master_start(cmd);
+			i2c_master_write_byte(cmd, (OLED_I2C_ADDRESS << 1) | I2C_MASTER_WRITE, true);
+            
+            
+			i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_DATA_STREAM, true);
+			i2c_master_write(cmd, zeros, 31, true);
+
+			i2c_master_stop(cmd);
+			i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
+
+
+            i2c_cmd_link_delete(cmd);
+            cmd = i2c_cmd_link_create();
+
+			i2c_master_start(cmd);
+			i2c_master_write_byte(cmd, (OLED_I2C_ADDRESS << 1) | I2C_MASTER_WRITE, true);
+            
+            
+			i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_DATA_STREAM, true);
+			i2c_master_write(cmd, sierp[i], 64, true);
+
+			i2c_master_stop(cmd);
+			i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
+
+
+
+
+			i2c_cmd_link_delete(cmd);
+
+        if(i<7){
+            cmd = i2c_cmd_link_create();
+			i2c_master_start(cmd);
+			i2c_master_write_byte(cmd, (OLED_I2C_ADDRESS << 1) | I2C_MASTER_WRITE, true);
+
+			i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_CMD_STREAM, true);
+			i2c_master_write_byte(cmd, 0x00, true); // reset column
+			i2c_master_write_byte(cmd, 0x10, true);
+			i2c_master_write_byte(cmd, 0xB0 | (i+1), true); // increment page
+
+
+			i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_DATA_STREAM, true);
+			i2c_master_write_byte(cmd, 0x00, true);
+
+			i2c_master_stop(cmd);
+			i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
+			i2c_cmd_link_delete(cmd);
+        }
+
+    }
+    
+    MonitorHandler::last_page=0;
+
+}
+
 void MonitorHandler::initializeMonitor(){
 
     MonitorHandler::i2cMasterInit();
