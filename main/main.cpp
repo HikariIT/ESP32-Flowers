@@ -1,29 +1,23 @@
 #include "main.hpp"
-//#include <driver/dac_common.h>
+
 void App::init() {
-    ESP_ERROR_CHECK(nvs_flash_init());
-
-
+    initializeId();
 
     xTaskCreate(&LedHandler::ledHandlerTask, "led_handler", 2048,
                 nullptr, 4, nullptr);
     // BleServer::initializeBluetoothServer();
     MonitorHandler::initializeMonitor();
-    BleClient::initializeBluetoothClient();
+    //BleClient::initializeBluetoothClient();
     
     ThermometerHandler::initializeTermometer();
     xTaskCreate(&ThermometerHandler::ThermometerHandlerTask, "thermometer_handler", 2048,
                 nullptr, 4, nullptr);
     ESP_LOGI("App", "Initialized");
-    
-    WifiHandler::initializeWifiStation();
+    // WifiHandler::initializeWifiStation();
     // MqttHandler::initializeMqttClient();
 
     //xTaskCreate(&HttpHandler::httpHandlerTask, "http_handler", 2048,
     //            nullptr, 5, nullptr);
-    ButtonHandler::buttonInit();
-    xTaskCreate(&ButtonHandler::ButtonHandlerTask, "button_handler", 2048,
-                nullptr, 5, nullptr);
 }
 static void example_ledc_init(void)
 {

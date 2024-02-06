@@ -11,8 +11,8 @@
 #define WIFI_FAIL_BIT           BIT1
 #define MAX_CONN_RETRY_COUNT    1000
 
-#define WIFI_SSID               "Hikari"
-#define WIFI_PASS               "lubieplacki"
+#define WIFI_SSID               "UPC6D29B13"
+#define WIFI_PASS               "jhs2exsuryYW"
 
 class WifiHandler {
 private:
