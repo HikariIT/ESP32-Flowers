@@ -7,6 +7,7 @@
 
 #include "main.hpp"
 #include "led_handler.hpp"
+#incldue "diode_handler.hpp"
 #include "wifi_handler.hpp"
 #include "http_handler.hpp"
 #include "ble_server.hpp"
