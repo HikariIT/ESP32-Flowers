@@ -7,7 +7,7 @@
 #include "wifi_handler.hpp"
 #include "gpio_cxx.hpp"
 
-#define LED_GPIO_PORT 27
+#define DIODE_GPIO_PORT 27
 
 enum TemperatureStatus {
     NORMAL,
@@ -26,7 +26,7 @@ struct DHT11Conditions {
     HumidityStatus humidityStatus;
 };
 
-class LedHandler final {
+class DiodeHandler final {
 private:
     static int current_temperature;
     static int current_humidity;
@@ -43,7 +43,7 @@ public:
     static void setData(int temperature, int humidity);
     static void setLevel(idf::GPIOLevel level);
     static void toggleLevel();
-    static void ledHandlerTask(void *pvParameters);
+    static void DiodeHandlerTask(void *pvParameters);
     static DHT11Conditions checkConditions();
 };
 

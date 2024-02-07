@@ -365,12 +365,12 @@ void MonitorHandler::printText(const char* arg_text){
 }
 
 
-void MonitorHandler::updateData(const int temperature, const int humidity){
+void MonitorHandler::updateData(const int temperature, const int humidity, const float moisture){
     ESP_LOGI(MonitorHandler::TAG, "Aktualizacja danych");
     MonitorHandler::clearDisplay();
     //MonitorHandler::mode = MonitorHandler::mode == 0 ? 1 : 0;
     char text[128];
-    sprintf(text, " Temp: %d*C \n Humidity: %d%%", temperature, humidity);
+    sprintf(text, " Temp: %d*C \n Humidity: %d%%\n Moisture: %.1f%%", temperature, humidity, moisture);
     ESP_LOGI(MonitorHandler::TAG, "Wysłano dane");
     MonitorHandler::printText(text);
 }

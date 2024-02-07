@@ -81,7 +81,7 @@ class MonitorHandler{
     public:
         static void destroyCapitalism();
         static void initializeMonitor();
-        static void updateData(const int temperature, const int humidity);
+        static void updateData(const int temperature, const int humidity, const float moisture);
         static void updateCommunicate(const char *communicate, const int after_data);
 
 };

@@ -13,7 +13,9 @@
 #include "freertos/timers.h"
 #include "driver/gpio.h"
 #include "monitor_handler.hpp"
-#include "led_handler.hpp"
+#include "diode_handler.hpp"
+#include "speaker_handler.hpp"
+#include "soil_moisture_handler.hpp"
 #define REFRESH_RATE 10000
 #ifndef DHT11_H_
 #define DHT11_H_

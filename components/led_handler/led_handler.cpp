@@ -1,13 +1,6 @@
 #include "led_handler.hpp"
 
 
-int LedHandler::current_temperature = 0;
-int LedHandler::current_humidity = 0;
-int LedHandler::min_temperature = 0;
-int LedHandler::max_temperature = 100;
-int LedHandler::min_humidity = 0;
-int LedHandler::max_humidity = 100;
-
 const idf::GPIO_Output *LedHandler::_led = new idf::GPIO_Output(idf::GPIONum(LED_GPIO_PORT));
 idf::GPIOLevel LedHandler::_level = idf::GPIOLevel::LOW;
 const int LedHandler::BLINK_PERIOD_MS = 500;

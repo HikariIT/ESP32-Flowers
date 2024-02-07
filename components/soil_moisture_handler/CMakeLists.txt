@@ -1,0 +1,1 @@
+idf_component_register(SRCS "soil_moisture_handler.cpp" INCLUDE_DIRS "include" REQUIRES "driver")

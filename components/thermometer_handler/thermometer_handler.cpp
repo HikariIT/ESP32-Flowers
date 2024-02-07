@@ -106,9 +106,11 @@ void ThermometerHandler::ThermometerHandlerTask(void *pvParameter) {
         reading = DHT11_read();
         if(reading.status == DHT11_OK) {
             ESP_LOGI(TAG, "Temperature: %d*C Humidity: %d%%", reading.temperature, reading.humidity);
-            MonitorHandler::updateData(reading.temperature, reading.humidity);
-            LedHandler::setData(reading.temperature, reading.humidity);
-            DHT11Conditions conditions = LedHandler::checkConditions();
+            float moisture = SoilMoistureHandler::read_soil_moisture();
+            MonitorHandler::updateData(reading.temperature, reading.humidity, moisture);
+            DiodeHandler::setData(reading.temperature, reading.humidity);
+            SpeakerHandler::update_data(reading.temperature, reading.humidity);
+            DHT11Conditions conditions = DiodeHandler::checkConditions();
             if (conditions.temperatureStatus == TemperatureStatus::HIGH) 
                 MonitorHandler::updateCommunicate(" Temp too high!", 0);
             else if (conditions.temperatureStatus == TemperatureStatus::LOW)
@@ -121,7 +123,7 @@ void ThermometerHandler::ThermometerHandlerTask(void *pvParameter) {
 
         } else {
             ESP_LOGE(TAG, "Could not read data from sensor");
-            MonitorHandler::updateData(-1, -1);
+            MonitorHandler::updateData(-1, -1, -1);
             MonitorHandler::updateCommunicate(" Could not \n read data \n from sensor", 1);
         }
         vTaskDelay(REFRESH_RATE / portTICK_PERIOD_MS);

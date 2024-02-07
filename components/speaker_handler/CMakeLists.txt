@@ -1,0 +1,1 @@
+idf_component_register(SRCS "speaker_handler.cpp" INCLUDE_DIRS "include" REQUIRES "driver")
